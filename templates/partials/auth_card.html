@@ -1,0 +1,160 @@
+{# Log in / sign up card: an Alpine.js component (frontend/src/js/auth.js) talking to /api/auth/. #}
+<aside class="auth" id="auth" aria-label="Log in or sign up" x-data="authCard" x-cloak>
+  <div class="a-tabs" role="tablist" aria-label="Account" :data-tab="tab">
+    <button role="tab" :aria-selected="tab === 'login'" @click="go('login')" x-text="tr('login')"></button>
+    <button role="tab" :aria-selected="tab === 'signup'" @click="go('signup')" x-text="tr('signup')"></button>
+  </div>
+
+  <div id="authBody">
+    {# ---------- log in ---------- #}
+    <template x-if="tab === 'login'">
+      <div>
+        <h2 class="a-h" x-text="tr('a_welcome')"></h2>
+        <p class="a-p" x-text="tr('a_welcome_p')"></p>
+        <form id="loginForm" novalidate @submit.prevent="doLogin()">
+          <p class="form-err" role="alert" x-text="formErr"></p>
+          <label class="fld"><span>Email or mobile number</span>
+            <input class="in" name="ident" x-model="login.ident" autocomplete="username" placeholder="you@example.com or 98100 12345"></label>
+          <label class="fld"><span>Password</span>
+            <span class="pw"><input class="in" name="pw" :type="showPw ? 'text' : 'password'" x-model="login.pw" autocomplete="current-password">
+              <button type="button" @click="showPw = !showPw" x-text="showPw ? 'Hide' : 'Show'"></button></span></label>
+          <div class="a-row">
+            <label class="check !m-0"><input type="checkbox" name="keep" x-model="login.keep"> <span>Keep me signed in</span></label>
+            <button type="button" class="linkbtn" @click="forgot()">Forgot password?</button>
+          </div>
+          <button class="btn full" type="submit" :disabled="busy" x-text="busy ? 'Signing in…' : tr('login')"></button>
+        </form>
+        <div class="demo">
+          <p x-text="tr('demo_try')"></p>
+          <div class="demo-btns">
+            <button type="button" data-demo="org" @click="demo('org')" :disabled="busy"><span x-text="tr('r_org_s')"></span><small>Hotel Meghdoot</small></button>
+            <button type="button" data-demo="ngo" @click="demo('ngo')" :disabled="busy"><span x-text="tr('r_ngo')"></span><small>Annadaan Kitchen</small></button>
+            <button type="button" data-demo="vol" @click="demo('vol')" :disabled="busy"><span x-text="tr('r_vol')"></span><small>Priya Sharma</small></button>
+          </div>
+          <p class="demo-more">Also try <button type="button" data-demo="ulb" @click="demo('ulb')">a municipal body</button>.</p>
+        </div>
+        <p class="a-foot">New here? <button type="button" class="linkbtn" @click="go('signup')">Create an account</button></p>
+      </div>
+    </template>
+
+    {# ---------- choose account type ---------- #}
+    <template x-if="tab === 'signup' && !role">
+      <div>
+        <h2 class="a-h" x-text="tr('a_join')"></h2>
+        <p class="a-p" x-text="tr('a_join_p')"></p>
+        <div class="roles">
+          <template x-for="r in roleCards" :key="r.key">
+            <button type="button" class="rolecard" :data-role="r.key" @click="pickRole(r.key)">
+              <span class="ic" :style="`background:${r.bg};color:${r.col}`" x-html="r.icon"></span>
+              <span><strong x-text="tr('r_' + r.key)"></strong><small x-text="tr('r_' + r.key + '_d')"></small></span>
+              <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 6 6 6-6 6"/></svg>
+            </button>
+          </template>
+        </div>
+        <p class="a-foot">Already have an account? <button type="button" class="linkbtn" @click="go('login')" x-text="tr('login')"></button></p>
+      </div>
+    </template>
+
+    {# ---------- sign-up form (restaurant/cafe/individual, NGO or volunteer) ---------- #}
+    <template x-if="tab === 'signup' && role">
+      <div>
+        <button type="button" class="back" @click="role = null; errors = {}; formErr = ''">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 6-6 6 6 6"/></svg>All account types</button>
+        <h2 class="a-h" x-text="{org:'Restaurant, cafe or individual', ngo:'NGO account', vol:'Volunteer account'}[role]"></h2>
+        <p class="a-p" x-text="{org:'For restaurants, cafes, hotels, caterers, messes, households and anyone with surplus food.', ngo:'For shelters, community kitchens, children’s and elders’ homes, relief groups and gaushalas that receive food.', vol:'Pick up surplus food near you and deliver it safely.'}[role]"></p>
+
+        <form id="signupForm" novalidate @submit.prevent="submit()" :data-role="role">
+          <p class="form-err" role="alert" x-text="formErr"></p>
+
+          <template x-if="role !== 'vol'">
+            <div>
+              <label class="fld"><span x-text="role === 'ngo' ? 'NGO type' : 'I am a'"></span>
+                <select class="in" name="orgType" x-model="f.orgType">
+                  <template x-for="g in (role === 'ngo' ? [['ngo','NGO']] : [['give','Food business'],['people','Individuals'],['proc','Other organizations'],['gov','Government']])" :key="g[0]">
+                    <optgroup :label="g[1]">
+                      <template x-for="[k, o] in types(g[0])" :key="k"><option :value="k" x-text="o.label" :selected="k === f.orgType"></option></template>
+                    </optgroup>
+                  </template>
+                </select></label>
+              <label class="fld"><span x-text="role === 'ngo' ? 'NGO name' : (type.noReg ? 'Name shown to NGOs' : 'Business name')"></span>
+                <input class="in" name="org" x-model="f.org" autocomplete="organization" :aria-invalid="!!errors.org"
+                       :placeholder="role === 'ngo' ? 'Annadaan Community Kitchen' : type.noReg ? (f.orgType === 'event' ? 'Sharma family wedding' : 'Sharma family, Karol Bagh') : f.orgType === 'cafe' ? 'Brew and Bake Cafe' : 'Hotel Meghdoot'">
+                <small x-show="type.noReg">No licence needed. A volunteer collects from your door.</small>
+                <span class="err" x-text="errors.org"></span></label>
+              <label class="fld" x-show="!type.noReg"><span x-text="reg.label"></span>
+                <input class="in" name="reg" x-model="f.reg" :placeholder="reg.ph || ''" :aria-invalid="!!errors.reg">
+                <small x-text="reg.hint"></small><span class="err" x-text="errors.reg"></span></label>
+              <template x-if="type.kind === 'donor' && !type.noReg">
+                <div>
+                  <label class="fld"><span>Food waste on a typical day</span>
+                    <input class="in" name="daily" type="number" min="1" inputmode="numeric" x-model="f.daily" placeholder="In kg, for example 140" :aria-invalid="!!errors.daily">
+                    <span class="err" x-text="errors.daily"></span></label>
+                  <p class="note-box" :class="+f.daily >= 100 ? '' : 'warm'" x-text="bwgNote"></p>
+                </div>
+              </template>
+              <template x-if="type.kind === 'receiver'">
+                <label class="fld"><span>How much can you take on a typical day?</span>
+                  <input class="in" name="cap" type="number" min="1" inputmode="numeric" x-model="f.cap" :aria-invalid="!!errors.cap"
+                         :placeholder="type.unit === 'servings' ? 'Servings, for example 200' : 'Kilograms, for example 300'">
+                  <span class="err" x-text="errors.cap"></span></label>
+              </template>
+            </div>
+          </template>
+
+          <div class="row2">
+            <label class="fld"><span x-text="role === 'vol' || type.noReg ? 'Full name' : 'Contact person'"></span>
+              <input class="in" name="name" x-model="f.name" autocomplete="name" :aria-invalid="!!errors.name"><span class="err" x-text="errors.name"></span></label>
+            <label class="fld"><span>Mobile number</span>
+              <input class="in" name="phone" type="tel" x-model="f.phone" placeholder="98100 12345" autocomplete="tel-national" :aria-invalid="!!errors.phone"><span class="err" x-text="errors.phone"></span></label>
+          </div>
+          <label class="fld"><span>Email</span>
+            <input class="in" name="email" type="email" x-model="f.email" autocomplete="email" :aria-invalid="!!errors.email"
+                   :placeholder="role === 'ngo' ? 'hello@yourngo.org' : 'you@example.com'"><span class="err" x-text="errors.email"></span></label>
+          <div class="row2">
+            <label class="fld"><span>City</span>
+              <select class="in" name="city" x-model="f.city"><template x-for="c in cities" :key="c.id"><option :value="c.id" x-text="c.name" :selected="c.id === f.city"></option></template></select></label>
+            <label class="fld"><span>Area or PIN code</span>
+              <input class="in" name="area" x-model="f.area" placeholder="Karol Bagh or 110005" autocomplete="postal-code" :aria-invalid="!!errors.area"><span class="err" x-text="errors.area"></span></label>
+          </div>
+
+          <template x-if="role === 'vol'">
+            <div>
+              <div class="fld"><span>How will you travel?</span>
+                <div class="opts"><template x-for="v in vehicles" :key="v"><button type="button" class="opt" :aria-pressed="f.vehicle === v" @click="f.vehicle = v" x-text="v"></button></template></div>
+                <span class="err" x-text="errors.vehicle"></span></div>
+              <div class="fld"><span>When are you usually free?</span>
+                <div class="opts"><template x-for="s in slotOptions" :key="s"><button type="button" class="opt" :aria-pressed="f.slots.includes(s)" @click="toggleSlot(s)" x-text="s"></button></template></div>
+                <span class="err" x-text="errors.slots"></span></div>
+              <div class="verify" :class="f.verified && 'ok'">
+                <template x-if="f.verified"><span class="flex items-center gap-2"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 5 5 9-10"/></svg>Identity verified with DigiLocker</span></template>
+                <template x-if="!f.verified && verifying"><span class="flex w-full items-center justify-between gap-2">Connecting to DigiLocker <span class="pill info">Please wait</span></span></template>
+                <template x-if="!f.verified && !verifying"><span class="flex w-full items-center justify-between gap-2">Verify your ID with DigiLocker. Needed before your first pickup.<button type="button" class="btn ghost" @click="verify()">Verify</button></span></template>
+              </div>
+              <small class="kb-note">KindBytes keeps only the verified status, never your Aadhaar number.</small>
+              <label class="check"><input type="checkbox" name="hyg" x-model="f.hyg"> <span>I will complete the hygiene checklist at every pickup: clean hands, gloves, a sanitised crate and a temperature check.</span></label>
+              <span class="err" x-text="errors.hyg"></span>
+              <label class="check"><input type="checkbox" name="fostac" x-model="f.fostac"> <span>I have done FSSAI's FoSTaC food handler training. Optional.</span></label>
+            </div>
+          </template>
+          <template x-if="role === 'ngo'">
+            <label class="check"><input type="checkbox" name="storage" x-model="f.storage"> <span>We can hold food safely: a fridge or hot-holding, and clean serving utensils.</span></label>
+          </template>
+
+          <label class="fld"><span>Create a password</span>
+            <span class="pw"><input class="in" name="pw" :type="showPw ? 'text' : 'password'" x-model="f.pw" autocomplete="new-password" placeholder="At least 8 characters" :aria-invalid="!!errors.pw">
+              <button type="button" @click="showPw = !showPw" x-text="showPw ? 'Hide' : 'Show'"></button></span>
+            <span class="meter"><i :style="meterStyle"></i></span>
+            <small>Use 8 or more characters with a letter and a number.</small>
+            <span class="err" x-text="errors.pw"></span></label>
+          <label class="check"><input type="checkbox" name="agree" x-model="f.agree"> <span>I confirm these details are correct and agree to the food safety and handover terms.</span></label>
+          <span class="err" x-text="errors.agree"></span>
+          <p class="note-box warm mt-2.5" x-show="role !== 'vol' && !type.noReg"
+             x-text="`We check registration numbers before the first ${role === 'ngo' ? 'delivery' : 'pickup'}. You can start using KindBytes right away.`"></p>
+          <button class="btn full mt-3" type="submit" :disabled="busy"
+                  x-text="busy ? 'Creating your account…' : `Create ${ {org:'donor', ngo:'NGO', vol:'volunteer'}[role] } account`"></button>
+        </form>
+        <p class="a-foot">Already have an account? <button type="button" class="linkbtn" @click="go('login')" x-text="tr('login')"></button></p>
+      </div>
+    </template>
+  </div>
+</aside>

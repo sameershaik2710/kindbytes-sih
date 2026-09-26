@@ -1,0 +1,68 @@
+# Full stack on one machine: `docker compose up --build`, then open http://localhost:8000
+x-app-env: &app-env
+  DJANGO_DEBUG: "0"
+  DJANGO_SECRET_KEY: "change-me-in-production"
+  DJANGO_ALLOWED_HOSTS: "localhost,127.0.0.1"
+  DJANGO_CSRF_TRUSTED_ORIGINS: "http://localhost:8000,http://127.0.0.1:8000"
+  DJANGO_SECURE_COOKIES: "0"
+  DATABASE_URL: "postgres://kindbytes:kindbytes@db:5432/kindbytes"
+  CELERY_BROKER_URL: "redis://redis:6379/0"
+  KB_LAZY_TICK: "0"          # Celery beat drives the dispatch network
+
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: kindbytes
+      POSTGRES_USER: kindbytes
+      POSTGRES_PASSWORD: kindbytes
+    volumes: [pgdata:/var/lib/postgresql/data]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U kindbytes -d kindbytes"]
+      interval: 5s
+      retries: 10
+
+  redis:
+    image: redis:7-alpine
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      retries: 10
+
+  migrate:
+    build: .
+    image: kindbytes:1.0.0
+    command: sh -c "python manage.py migrate --noinput && python manage.py seed_kindbytes"
+    environment: *app-env
+    depends_on:
+      db: {condition: service_healthy}
+
+  web:
+    image: kindbytes:1.0.0
+    environment: *app-env
+    ports: ["8000:8000"]
+    restart: unless-stopped
+    depends_on:
+      migrate: {condition: service_completed_successfully}
+      redis: {condition: service_healthy}
+
+  worker:
+    image: kindbytes:1.0.0
+    command: celery -A kindbytes worker --loglevel=info --concurrency=2
+    environment: *app-env
+    restart: unless-stopped
+    depends_on:
+      migrate: {condition: service_completed_successfully}
+      redis: {condition: service_healthy}
+
+  beat:
+    image: kindbytes:1.0.0
+    command: celery -A kindbytes beat --loglevel=info --schedule=/tmp/celerybeat-schedule
+    environment: *app-env
+    restart: unless-stopped
+    depends_on:
+      migrate: {condition: service_completed_successfully}
+      redis: {condition: service_healthy}
+
+volumes:
+  pgdata:

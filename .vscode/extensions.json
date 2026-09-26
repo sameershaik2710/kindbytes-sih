@@ -1,0 +1,10 @@
+{
+  "recommendations": [
+    "ms-python.python",
+    "batisteo.vscode-django",
+    "bradlc.vscode-tailwindcss",
+    "adrianwilczynski.alpine-js-intellisense",
+    "ms-azuretools.vscode-docker",
+    "ms-kubernetes-tools.vscode-kubernetes-tools"
+  ]
+}

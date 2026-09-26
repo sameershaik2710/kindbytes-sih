@@ -1,0 +1,8 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {"label": "Tailwind: watch CSS", "type": "shell", "command": "npm run watch:css", "isBackground": true, "problemMatcher": []},
+    {"label": "Frontend: build", "type": "shell", "command": "npm run build", "problemMatcher": []},
+    {"label": "Docker: compose up", "type": "shell", "command": "docker compose up --build", "problemMatcher": []}
+  ]
+}

@@ -1,0 +1,96 @@
+<section id="home" aria-label="KindBytes, log in or sign up">
+  <div class="h-scrim" aria-hidden="true"></div>
+  <header class="h-top">
+    <div class="brand">
+      <svg viewBox="0 0 32 32" aria-hidden="true"><path d="M4 16h24a12 12 0 0 1-24 0z" fill="#F5B83D"/><circle cx="10.5" cy="10" r="2.2" fill="#3FDBB1"/><circle cx="16" cy="5.8" r="2.2" fill="#A897FF"/><circle cx="21.5" cy="10" r="2.2" fill="#3FDBB1"/></svg>
+      KindBytes
+    </div>
+    <span class="spacer"></span>
+    <div class="lang" role="group" aria-label="Language">
+      <button data-lang="en" aria-pressed="true">EN</button>
+      <button data-lang="hi" aria-pressed="false" lang="hi">हिं</button>
+    </div>
+  </header>
+  <div class="h-stage">
+    <div class="h-left">
+      <div class="h-head">
+        <h1 class="h-title"><span data-i18n="h_t1">Surplus food to people.</span><em data-i18n="h_t2">The rest, never to landfill.</em></h1>
+        <p class="h-sub2" data-i18n="h_sub2">Every kilo of surplus food graded for safety, segregated at source and sent where it helps most, with a QR trail from kitchen to plate.</p>
+      </div>
+      <div class="h-bottom">
+        <div class="h-live" aria-hidden="true">
+          <span class="h-pulse"></span>
+          <span><b id="hMeals">0</b><small data-i18n="h_live">meals reached people today</small></span>
+        </div>
+        <button class="h-cue" data-scroll="about"><span data-i18n="h_more">Learn more</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></button>
+      </div>
+    </div>
+    {% include "partials/auth_card.html" %}
+  </div>
+
+  <div class="h-more" id="about">
+    <section class="h-sec reveal">
+      <span class="eyebrow">About KindBytes</span>
+      <h2>One platform for surplus food and food waste</h2>
+      <p>Hotels, messes and hospitals list surplus in under a minute. KindBytes grades it for safety, sends edible food to people, and routes the rest to animal feed, biogas or recycling, so nothing reaches landfill.</p>
+      <div class="h-facts">
+        <div><strong>78 million t</strong><span>of food is wasted in India every year.</span><cite>UNEP Food Waste Index Report 2024</cite></div>
+        <div><strong>100 kg a day</strong><span>of waste makes a kitchen a bulk waste generator.</span><cite>Solid Waste Management Rules, 2026</cite></div>
+        <div><strong>4 streams</strong><span>wet, dry, sanitary and special care, segregated at source.</span><cite>Solid Waste Management Rules, 2026</cite></div>
+      </div>
+    </section>
+
+    <section class="h-sec reveal" id="how">
+      <span class="eyebrow">How it works</span>
+      <h2>From kitchen to people in under an hour</h2>
+      <ol class="flow">
+        <li class="card-g"><b>01</b><h3>List and grade</h3><p>A kitchen lists surplus. The safety engine checks freshness, temperature, packaging and hygiene, and grades it A, B or C.</p></li>
+        <li class="card-g"><b>02</b><h3>Segregate at source</h3><p>Each batch splits into four streams: food for people, animal feed, wet waste and dry packaging.</p></li>
+        <li class="card-g"><b>03</b><h3>Match and move</h3><p>The nearest NGO with room gets the food. A hygiene-checked volunteer carries it, and every handover is scanned.</p></li>
+        <li class="card-g"><b>04</b><h3>Prove it</h3><p>Bulk kitchens get a monthly off-site processing certificate for their municipal body.</p></li>
+      </ol>
+    </section>
+
+    <section class="h-sec reveal" id="loop">
+      <span class="eyebrow">The waste loop</span>
+      <h2>People first. Landfill never.</h2>
+      <div class="loop">
+        <div class="card-g" style="--c:#3FDBB1"><h3>People</h3><p>Grade A and B food to shelters, kitchens and relief camps.</p><strong id="lpPeople">84%</strong><small>of surplus this month</small></div>
+        <div class="card-g" style="--c:#A897FF"><h3>Animal feed</h3><p>Safe but not for people, to gaushalas and animal shelters.</p><strong id="lpFeed">5%</strong><small>of surplus this month</small></div>
+        <div class="card-g" style="--c:#9CCB5B"><h3>Biogas and compost</h3><p>Peels, trimmings and spoiled food.</p><span class="bin">Green bin, wet waste</span><strong id="lpWet">8%</strong><small>of surplus this month</small></div>
+        <div class="card-g" style="--c:#62A8FF"><h3>Recycling</h3><p>Containers, foil and film to recovery facilities.</p><span class="bin">Blue bin, dry waste</span><strong id="lpDry">3%</strong><small>of surplus this month</small></div>
+        <div class="card-g" style="--c:#FF5E5B"><h3>Landfill</h3><p>The last resort, tracked to the kilo.</p><strong>0 kg</strong><small>sent to landfill</small></div>
+      </div>
+    </section>
+
+    <section class="h-sec reveal" id="who">
+      <span class="eyebrow">Who it's for</span>
+      <h2>Three ways to join</h2>
+      <div class="who">
+        <div class="card-g whocard">
+          <span class="ic" style="background:rgba(245,184,61,.14);color:var(--turmeric)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/><path d="M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3zm0 0v7"/></svg></span>
+          <h3>Restaurants, cafes & individuals</h3>
+          <p>Restaurants, cafes, hotels, caterers, messes, households and event hosts. List surplus in a minute and see where every kilo goes.</p>
+          <button class="btn" data-signup="org">Sign up to share food</button>
+        </div>
+        <div class="card-g whocard">
+          <span class="ic" style="background:rgba(63,219,177,.14);color:var(--jade)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/><path d="M9 11h6M12 8v6"/></svg></span>
+          <h3>NGOs</h3>
+          <p>Shelters, community kitchens, children's and elders' homes, relief groups and gaushalas. Set your capacity and receive safe food first.</p>
+          <button class="btn" data-signup="ngo">Sign up as an NGO</button>
+        </div>
+        <div class="card-g whocard">
+          <span class="ic" style="background:rgba(168,151,255,.16);color:var(--lilac)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="5.5" cy="17.5" r="3.5"/><circle cx="18.5" cy="17.5" r="3.5"/><path d="M15 6h2l3 7.5M5.5 17.5 9 10h6l3.5 7.5M9 10 7.5 6H5"/></svg></span>
+          <h3>Volunteers</h3>
+          <p>Students, riders and anyone with an hour to spare. Pick up food near you, follow the hygiene checklist and earn eco-credits.</p>
+          <button class="btn" data-signup="vol">Sign up as a volunteer</button>
+        </div>
+      </div>
+    </section>
+
+    <footer class="h-foot">
+      <span>KindBytes, built for Smart India Hackathon 2026, problem statement SIH26195, Clean and Green Technology.</span>
+      <span>Working prototype. Dashboard figures are simulated.</span>
+    </footer>
+  </div>
+</section>

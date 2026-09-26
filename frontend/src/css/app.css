@@ -1,0 +1,12 @@
+/* KindBytes stylesheet, built with Tailwind CSS: `npm run build:css` */
+@import "./legacy.css";
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+[x-cloak] { display: none !important; }
+
+@layer components {
+  .kb-note { @apply mb-2.5 block text-xs leading-snug text-ink-3; }
+}

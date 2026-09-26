@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: kindbytes-config
+data:
+  DJANGO_DEBUG: "0"
+  DJANGO_ALLOWED_HOSTS: "kindbytes.local,localhost,127.0.0.1"
+  DJANGO_CSRF_TRUSTED_ORIGINS: "http://kindbytes.local,http://localhost:8000"
+  DJANGO_SECURE_COOKIES: "0"        # set to "1" once the ingress serves HTTPS
+  CELERY_BROKER_URL: "redis://redis:6379/0"
+  KB_LAZY_TICK: "0"                 # Celery beat drives the dispatch network

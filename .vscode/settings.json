@@ -1,0 +1,7 @@
+{
+  "files.associations": {"**/templates/**/*.html": "django-html"},
+  "emmet.includeLanguages": {"django-html": "html"},
+  "tailwindCSS.includeLanguages": {"django-html": "html"},
+  "python.testing.unittestEnabled": false,
+  "[python]": {"editor.rulers": [120]}
+}

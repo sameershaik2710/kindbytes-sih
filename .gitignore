@@ -1,0 +1,10 @@
+node_modules/
+__pycache__/
+*.pyc
+db.sqlite3
+staticfiles/
+static/css/
+static/js/
+static/vendor/
+.env
+.venv/
