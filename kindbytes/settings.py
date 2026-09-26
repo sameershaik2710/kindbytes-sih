@@ -17,7 +17,7 @@ def env_list(name, default=""):
 
 SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY", "dev-only-insecure-key-change-me")
 DEBUG = env_bool("DJANGO_DEBUG", True)
-ALLOWED_HOSTS = env_list("DJANGO_ALLOWED_HOSTS", "localhost,127.0.0.1,[::1]")
+ALLOWED_HOSTS = env_list("DJANGO_ALLOWED_HOSTS", "kindbytes.vercel.app,localhost,127.0.0.1,[::1]")
 CSRF_TRUSTED_ORIGINS = env_list("DJANGO_CSRF_TRUSTED_ORIGINS")
 
 INSTALLED_APPS = [
